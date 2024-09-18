@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
     return res.json(JSend.success());
 });
 
-// app.use('/public', express.static('public'));
+app.use('/public', express.static('public'));
 contactsRouter.setup(app);
 
  app.use(resourceNotFound);
