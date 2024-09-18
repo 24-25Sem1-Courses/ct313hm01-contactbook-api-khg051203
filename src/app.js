@@ -5,7 +5,8 @@ const contactsRouter = require('./routes/contacts.router');
 const {
     resourceNotFound,
     handleError,
-} = require('./controllers/errors.controller')
+} = require('./controllers/errors.controller');
+const { specs, swaggerUi } = require('./docs/swagger');
 
 const app = express();
 app.use(cors());
@@ -17,10 +18,11 @@ app.get('/', (req, res) => {
 });
 
 app.use('/public', express.static('public'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 contactsRouter.setup(app);
 
- app.use(resourceNotFound);
+app.use(resourceNotFound);
 
- app.use(handleError);
+app.use(handleError);
 
 module.exports = app;
