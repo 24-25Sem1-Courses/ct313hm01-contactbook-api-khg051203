@@ -38,7 +38,6 @@ module.exports.setup = (app) => {
  *               properties:
  *                 status:
  *                   type: string
- *                   description: The response status
  *                   enum: [success]
  *                 data:
  *                   type: object
@@ -50,6 +49,7 @@ module.exports.setup = (app) => {
  *                     metadata:
  *                       $ref: '#/components/schemas/PaginationMetadata'
  */
+
 
 
     router.get('/', contactsController.getContactsByFilter);
@@ -187,7 +187,7 @@ module.exports.setup = (app) => {
  */
 
 
-    router.put('/:id', contactsController.updateContact);
+    router.put('/:id', avatarUpload, contactsController.updateContact);
 /**
  * @swagger
  * /api/v1/contacts/{id}:

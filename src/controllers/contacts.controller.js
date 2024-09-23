@@ -1,6 +1,7 @@
 const contactsService = require('../services/contacts.service');
 const ApiError = require('../api-error');
 const JSend = require('../jsend');
+const { unlink } = require('node:fs'); 
 
 async function createContact(req, res, next) {
     if (!req.body?.name || typeof req.body.name !== 'string') {
@@ -92,8 +93,32 @@ async function getContact(req, res, next) {
     }
 }
 
-function updateContact(req, res) {
-    return res.json(JSend.success({ contact: {} }));
+async function updateContact(req, res, next) {
+    if (Object.keys(req.body).length !== 0 && !req.file) {
+        return next(new ApiError(400, 'Data to updata can not be empty'));
+
+    }
+
+    const { id } = req.params;
+
+    try {
+        const updated = await contactsService.updateContact(id, {
+            ...req.body,
+            avatar: req.file ? '/public/uploads/${req.file.filename}' : null,
+        });
+        if (!updated) {
+            return next(new ApiError(404, 'Contact not found'));
+
+        }
+        return res.json(
+            JSend.success({
+                contact: updated,
+            })
+        );
+    } catch ( error) {
+        console.log(error);
+        return next(new ApiError(500, 'Error updating contact with id=${id}'))
+    }
 }
 
 function deleteContact(req, res) {
@@ -104,6 +129,7 @@ function deleteAllContacts(req, res) {
     return res.json(JSend.success());
 }
 
+
 module.exports = {
     getContactsByFilter,
     deleteAllContacts,
@@ -111,4 +137,5 @@ module.exports = {
     createContact,
     updateContact,
     deleteContact,
+    updateContact
 };
